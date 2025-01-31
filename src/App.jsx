@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2 } from 'lucide-react';
 import { templates } from '@/data/templates';
 import { cn } from '@/lib/utils';
+import { TemplateSearchDialog } from '@/components/dialog/templateSearchDialog';
 
 function App() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -19,6 +20,7 @@ function App() {
   const [generatedCaption, setGeneratedCaption] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
 
   const audiences = {
     genz: 'Gen Z (13-26 tahun)',
@@ -93,7 +95,7 @@ function App() {
           <div className="space-y-2">
             <label className="text-sm font-medium">Template Caption:</label>
             <div className="flex flex-wrap gap-2">
-              {templates.map((template) => (
+              {templates.slice(0, 3).map((template) => (
                 <Badge
                   key={template.id}
                   variant={selectedTemplate?.id === template.id ? "default" : "outline"}
@@ -103,8 +105,22 @@ function App() {
                   {template.title}
                 </Badge>
               ))}
+              <Badge
+                variant="outline"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowTemplateDialog(true)}
+                className="bg-gray-100"
+              >
+                +{templates.length - 3} templates
+              </Badge>
             </div>
           </div>
+          <TemplateSearchDialog
+            open={showTemplateDialog}
+            onOpenChange={setShowTemplateDialog}
+            templates={templates}
+            onSelectTemplate={handleTemplateClick}
+          />
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Deskripsi Konten:</label>

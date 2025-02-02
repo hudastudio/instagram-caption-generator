@@ -1,5 +1,3 @@
-import { title } from "process";
-
 export const templates = [
     {
         id: 1,
@@ -347,7 +345,7 @@ export const templates = [
         id: 57,
         title: "Inspirational Quote",
         content:
-            "“The only way to do great work is to love what you do.” - Steve Jobs 💡✨",
+            "`The only way to do great work is to love what you do.` - Steve Jobs 💡✨",
         topic: "Motivasi, Quote, Inspirasi",
     },
     {

@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from 'lucide-react';
 import { templates } from '@/data/templates';
 import { cn } from '@/lib/utils';
-import TemplateSearchDialog from '@/components/dialog/TemplateSearchDialog';
+import TemplateSearchDialog from '@/components/dialog/TemplateSearchDialog.jsx';
 import HistorySidebar from '@/components/sidebar/HistorySidebar';
 import { getAllHistories, saveHistory, deleteHistory } from '@/services/db';
 

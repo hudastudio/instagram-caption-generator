@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2 } from 'lucide-react';
+import { Loader2, Github } from 'lucide-react';
 import { templates } from '@/data/templates';
 import { cn } from '@/lib/utils';
 import SearchDialog from '@/components/dialog/SearchDialog';
@@ -138,7 +138,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 py-7 px-4 sm:px-6 lg:px-8">
       <HistorySidebar
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -277,6 +277,18 @@ function App() {
           )}
         </CardContent>
       </Card>
+
+
+      <div className="text-center mt-4">
+        <a
+          className="text-center text-sm text-slate-500 hover:text-slate-700"
+          style={{ cursor: 'pointer' }}
+          onClick={() => window.open('https://github.com/hudastudio/instagram-caption-generator/', '_blank')}
+        >
+          <Github size={16} className="inline-block mr-2" />
+          Github @ hudastudio
+        </a>
+      </div>
     </div>
   );
 }

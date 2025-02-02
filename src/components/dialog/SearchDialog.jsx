@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-react';
 
-const TemplateSearchDialog = ({ open, onOpenChange, templates, onSelectTemplate }) => {
+const SearchDialog = ({ open, onOpenChange, templates, onSelectTemplate }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredTemplates = templates.filter(template =>
@@ -54,4 +54,4 @@ const TemplateSearchDialog = ({ open, onOpenChange, templates, onSelectTemplate 
     );
 }
 
-export default TemplateSearchDialog;
+export default SearchDialog;

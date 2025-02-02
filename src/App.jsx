@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -6,10 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from 'lucide-react';
 import { templates } from '@/data/templates';
 import { cn } from '@/lib/utils';
-import { TemplateSearchDialog } from '@/components/dialog/templateSearchDialog';
+import { TemplateSearchDialog } from '@/components/dialog/TemplateSearchDialog';
+import HistorySidebar from '@/components/sidebar/HistorySidebar';
+import { getAllHistories, saveHistory, deleteHistory } from '@/services/db';
 
 function App() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -21,6 +25,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+
+  const [histories, setHistories] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const audiences = {
     genz: 'Gen Z (13-26 tahun)',
@@ -40,16 +47,49 @@ function App() {
     formal: 'Formal'
   };
 
+  useEffect(() => {
+    loadHistories();
+  }, []);
+
+  const loadHistories = async () => {
+    try {
+      const result = await getAllHistories();
+      setHistories(result);
+    } catch (error) {
+      console.error('Error loading histories:', error);
+    }
+  };
+
+  const handleDeleteHistory = async (id) => {
+    try {
+      await deleteHistory(id);
+      loadHistories(); // Reload the histories after deletion
+    } catch (error) {
+      console.error('Error deleting history:', error);
+    }
+  };
+
+  const handleClickedHistory = (history) => {
+    setSelectedTemplate(null);
+    setContentDescription(history.description);
+    setTopic(history.topic);
+    setTargetAudience(history.target);
+    setTone(history.tone);
+    setGeneratedCaption(history.caption);
+    setIsOpen(false);
+  };
+
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
     setContentDescription(template.content);
     setTopic(template.topic);
+    setGeneratedCaption(null);
   };
 
   const generateCaption = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +109,21 @@ function App() {
       });
 
       const data = await response.json();
-      setGeneratedCaption(data.candidates[0].content.parts[0].text);
+      const caption = data.candidates[0].content.parts[0].text;
+      setGeneratedCaption(caption);
+
+      // Save to database using the service
+      const title = contentDescription.split('.')[0]; // Get first sentence as title
+      await saveHistory({
+        title,
+        description: contentDescription,
+        topic,
+        target: targetAudience,
+        tone,
+        caption
+      });
+
+      loadHistories();
     } catch (error) {
       console.error('Error:', error);
       setGeneratedCaption('Gagal membuat caption. Silakan coba lagi.');
@@ -85,6 +139,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <HistorySidebar
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        histories={histories}
+        handleDeleteHistory={handleDeleteHistory}
+        handleClickedHistory={handleClickedHistory}
+        onHistoryUpdated={loadHistories}
+        audiences={audiences}
+        tones={tones}
+      />
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold text-gray-900">
@@ -190,7 +254,6 @@ function App() {
               <div className="relative">
                 <Textarea
                   value={generatedCaption}
-                  readOnly
                   className="min-h-[150px]"
                 />
                 <Button

@@ -28,7 +28,7 @@ Before you begin, ensure you have met the following requirements:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/instagram-caption-generator.git
+git clone https://github.com/hudastudio/instagram-caption-generator.git
 cd instagram-caption-generator
 ```
 
